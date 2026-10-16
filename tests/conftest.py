@@ -124,7 +124,7 @@ def entry_data() -> dict:
 
 @pytest.fixture
 def config_entry(hass, entry_data) -> MockConfigEntry:
-    entry = MockConfigEntry(domain=DOMAIN, title="Pendel (Yannick)", data=entry_data, unique_id=f"{URL}#1")
+    entry = MockConfigEntry(domain=DOMAIN, title="Pendel (Alex)", data=entry_data, unique_id=f"{URL}#1")
     entry.add_to_hass(hass)
     return entry
 

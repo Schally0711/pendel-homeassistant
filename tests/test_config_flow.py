@@ -17,7 +17,7 @@ TRACKING = {
 
 def mock_login(aioclient_mock, status=201):
     aioclient_mock.post(f"{URL}/api/auth/token", json={"token": "new-token"}, status=status)
-    aioclient_mock.get(f"{URL}/api/me", json={"id": 1, "display_name": "Yannick"})
+    aioclient_mock.get(f"{URL}/api/me", json={"id": 1, "display_name": "Alex"})
     aioclient_mock.get(f"{URL}/api/places", json=PLACES)
     aioclient_mock.put(f"{URL}/api/places/1", json=PLACES[0])
     aioclient_mock.put(f"{URL}/api/places/2", json=PLACES[1])
@@ -40,7 +40,7 @@ async def test_full_flow(hass, aioclient_mock, zones):
 
     result = await hass.config_entries.flow.async_configure(result["flow_id"], TRACKING)
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert result["title"] == "Pendel (Yannick)"
+    assert result["title"] == "Pendel (Alex)"
     assert result["data"] == {"url": URL, "token": "new-token", **TRACKING}
     assert "password" not in result["data"]
     puts = {str(c[1]): c[2]["zone"] for c in aioclient_mock.mock_calls if c[0] == "PUT"}
@@ -89,7 +89,7 @@ async def test_two_factor_flow(hass, aioclient_mock, zones):
         return AiohttpClientMockResponse(method, url, status=201, json={"token": "new-token"})
 
     aioclient_mock.post(f"{URL}/api/auth/token", side_effect=token)
-    aioclient_mock.get(f"{URL}/api/me", json={"id": 1, "display_name": "Yannick"})
+    aioclient_mock.get(f"{URL}/api/me", json={"id": 1, "display_name": "Alex"})
     aioclient_mock.get(f"{URL}/api/places", json=PLACES)
     aioclient_mock.put(f"{URL}/api/places/1", json=PLACES[0])
     aioclient_mock.put(f"{URL}/api/places/2", json=PLACES[1])

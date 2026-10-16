@@ -21,15 +21,15 @@ async def test_sensors(hass, aioclient_mock, config_entry, zones):
     await setup(hass, config_entry)
     assert config_entry.state is ConfigEntryState.LOADED
 
-    status = hass.states.get("sensor.pendel_yannick_status")
+    status = hass.states.get("sensor.pendel_alex_status")
     assert status.state == "working_office"
-    assert hass.states.get("sensor.pendel_yannick_status_since").state == "2026-10-14T06:00:00+00:00"
-    worked = hass.states.get("sensor.pendel_yannick_worked_today")
+    assert hass.states.get("sensor.pendel_alex_status_since").state == "2026-10-14T06:00:00+00:00"
+    worked = hass.states.get("sensor.pendel_alex_worked_today")
     assert round(float(worked.state), 2) == 3.33 and worked.attributes["unit_of_measurement"] == "h"
-    assert round(float(hass.states.get("sensor.pendel_yannick_flexitime_balance").state), 2) == 1.58
-    vac = hass.states.get("sensor.pendel_yannick_vacation_remaining")
+    assert round(float(hass.states.get("sensor.pendel_alex_flexitime_balance").state), 2) == 1.58
+    vac = hass.states.get("sensor.pendel_alex_vacation_remaining")
     assert float(vac.state) == 5 and vac.attributes["planned"] == 8
-    nxt = hass.states.get("sensor.pendel_yannick_next_time_off")
+    nxt = hass.states.get("sensor.pendel_alex_next_time_off")
     assert nxt.state == "2026-12-21" and nxt.attributes["note"] == "Weihnachten"
 
 
@@ -106,7 +106,7 @@ async def test_buttons(hass, aioclient_mock, config_entry, zones):
     mock_pendel(aioclient_mock, today(running_session=None))
     await setup(hass, config_entry)
     await hass.services.async_call(
-        "button", "press", {"entity_id": "button.pendel_yannick_start_home_office"}, blocking=True
+        "button", "press", {"entity_id": "button.pendel_alex_start_home_office"}, blocking=True
     )
     start = next(c for c in aioclient_mock.mock_calls if str(c[1]).endswith("/api/clock/start"))
     assert start[2] == {"kind": "home", "place_id": 1}
@@ -122,7 +122,7 @@ async def test_button_conflict_raises(hass, aioclient_mock, config_entry, zones)
     await setup(hass, config_entry)
     with pytest.raises(HomeAssistantError, match="no_break_running"):
         await hass.services.async_call(
-            "button", "press", {"entity_id": "button.pendel_yannick_end_break"}, blocking=True
+            "button", "press", {"entity_id": "button.pendel_alex_end_break"}, blocking=True
         )
 
 
