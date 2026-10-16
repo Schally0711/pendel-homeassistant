@@ -1,0 +1,13 @@
+{
+  "domain": "pendel",
+  "name": "Pendel",
+  "codeowners": ["@Schally0711"],
+  "config_flow": true,
+  "dependencies": ["person", "zone"],
+  "documentation": "https://github.com/Schally0711/pendel-homeassistant",
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Schally0711/pendel-homeassistant/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

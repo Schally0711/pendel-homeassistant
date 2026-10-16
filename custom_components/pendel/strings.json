@@ -1,0 +1,152 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Pendel",
+        "description": "Enter the address of your Pendel instance and your login. Home Assistant creates its own API token; the password is not stored.",
+        "data": {
+          "url": "Address",
+          "email": "Email",
+          "password": "Password"
+        },
+        "data_description": {
+          "url": "e.g. https://pendel.example.com"
+        }
+      },
+      "tracking": {
+        "title": "Automatic tracking",
+        "description": "Choose the person whose location Pendel should use and the zones for home and office.",
+        "data": {
+          "track_location": "Report location changes to Pendel",
+          "person": "Person",
+          "home_zone": "Home zone",
+          "office_zone": "Office zone"
+        },
+        "data_description": {
+          "track_location": "Pendel uses this to record commutes, office time and breaks automatically.",
+          "office_zone": "The zone of your workplace. Create it under Settings → Areas & zones if it does not exist yet."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "description": "Pendel ({url}) rejected the token. Sign in again to create a new one.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach Pendel at this address.",
+      "invalid_auth": "Wrong email or password (or too many attempts).",
+      "required_for_tracking": "Required for automatic tracking.",
+      "same_zone": "Home and office must be different zones."
+    },
+    "abort": {
+      "already_configured": "This Pendel account is already configured.",
+      "reauth_successful": "Re-authentication successful.",
+      "wrong_account": "This is a different Pendel account."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Automatic tracking",
+        "data": {
+          "track_location": "Report location changes to Pendel",
+          "person": "Person",
+          "home_zone": "Home zone",
+          "office_zone": "Office zone"
+        },
+        "data_description": {
+          "track_location": "Pendel uses this to record commutes, office time and breaks automatically.",
+          "office_zone": "The zone of your workplace. Create it under Settings → Areas & zones if it does not exist yet."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach Pendel.",
+      "required_for_tracking": "Required for automatic tracking.",
+      "same_zone": "Home and office must be different zones."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "idle": "Not clocked in",
+          "working_home": "Working from home",
+          "working_office": "At the office",
+          "working_other": "Working",
+          "break": "On break",
+          "commute_to_work": "Commuting to work",
+          "commute_from_work": "Commuting home"
+        },
+        "state_attributes": {
+          "since": {
+            "name": "Since"
+          }
+        }
+      },
+      "status_since": {
+        "name": "Status since"
+      },
+      "worked_today": {
+        "name": "Worked today"
+      },
+      "target_today": {
+        "name": "Target today"
+      },
+      "remaining_today": {
+        "name": "Remaining today"
+      },
+      "balance": {
+        "name": "Flexitime balance"
+      },
+      "worked_week": {
+        "name": "Worked this week"
+      },
+      "target_week": {
+        "name": "Target this week"
+      },
+      "breaks_today": {
+        "name": "Breaks today"
+      },
+      "commute_today": {
+        "name": "Commute today"
+      },
+      "vacation_remaining": {
+        "name": "Vacation remaining"
+      },
+      "next_absence": {
+        "name": "Next time off"
+      }
+    },
+    "button": {
+      "start_home": {
+        "name": "Start home office"
+      },
+      "start_office": {
+        "name": "Start at the office"
+      },
+      "start_break": {
+        "name": "Start break"
+      },
+      "end_break": {
+        "name": "End break"
+      },
+      "stop_work": {
+        "name": "Finish work"
+      }
+    }
+  },
+  "exceptions": {
+    "action_rejected": {
+      "message": "Pendel rejected the action: {detail}"
+    },
+    "cannot_connect": {
+      "message": "Cannot reach Pendel."
+    }
+  }
+}

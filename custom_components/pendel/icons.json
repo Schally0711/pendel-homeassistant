@@ -1,0 +1,68 @@
+{
+  "entity": {
+    "sensor": {
+      "status": {
+        "default": "mdi:briefcase-clock",
+        "state": {
+          "idle": "mdi:sleep",
+          "working_home": "mdi:home-account",
+          "working_office": "mdi:office-building",
+          "working_other": "mdi:briefcase",
+          "break": "mdi:coffee",
+          "commute_to_work": "mdi:car",
+          "commute_from_work": "mdi:car-back"
+        }
+      },
+      "status_since": {
+        "default": "mdi:clock-start"
+      },
+      "worked_today": {
+        "default": "mdi:timer-outline"
+      },
+      "target_today": {
+        "default": "mdi:target"
+      },
+      "remaining_today": {
+        "default": "mdi:timer-sand"
+      },
+      "balance": {
+        "default": "mdi:scale-balance"
+      },
+      "worked_week": {
+        "default": "mdi:calendar-week"
+      },
+      "target_week": {
+        "default": "mdi:calendar-check"
+      },
+      "breaks_today": {
+        "default": "mdi:coffee-outline"
+      },
+      "commute_today": {
+        "default": "mdi:car-clock"
+      },
+      "vacation_remaining": {
+        "default": "mdi:palm-tree"
+      },
+      "next_absence": {
+        "default": "mdi:calendar-arrow-right"
+      }
+    },
+    "button": {
+      "start_home": {
+        "default": "mdi:home-account"
+      },
+      "start_office": {
+        "default": "mdi:office-building"
+      },
+      "start_break": {
+        "default": "mdi:coffee"
+      },
+      "end_break": {
+        "default": "mdi:coffee-off"
+      },
+      "stop_work": {
+        "default": "mdi:flag-checkered"
+      }
+    }
+  }
+}

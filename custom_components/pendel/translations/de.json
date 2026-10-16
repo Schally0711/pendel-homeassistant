@@ -1,0 +1,152 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mit Pendel verbinden",
+        "description": "Gib die Adresse deiner Pendel-Instanz und deine Zugangsdaten ein. Home Assistant erstellt damit einen eigenen API-Token; das Passwort wird nicht gespeichert.",
+        "data": {
+          "url": "Adresse",
+          "email": "E-Mail",
+          "password": "Passwort"
+        },
+        "data_description": {
+          "url": "z. B. https://pendel.example.com"
+        }
+      },
+      "tracking": {
+        "title": "Automatische Erfassung",
+        "description": "Wähle die Person, deren Standort Pendel nutzen soll, und die Zonen für Zuhause und Büro.",
+        "data": {
+          "track_location": "Ortswechsel an Pendel melden",
+          "person": "Person",
+          "home_zone": "Zone für Zuhause",
+          "office_zone": "Zone für das Büro"
+        },
+        "data_description": {
+          "track_location": "Pendel erfasst damit Arbeitsweg, Bürozeit und Pausen automatisch.",
+          "office_zone": "Die Zone deines Arbeitsplatzes. Fehlt sie, lege sie unter Einstellungen → Bereiche & Zonen an."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Erneut anmelden",
+        "description": "Pendel ({url}) hat den Token abgelehnt. Melde dich erneut an, um einen neuen zu erstellen.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Pendel ist unter dieser Adresse nicht erreichbar.",
+      "invalid_auth": "E-Mail oder Passwort falsch (oder zu viele Versuche).",
+      "required_for_tracking": "Für die automatische Erfassung erforderlich.",
+      "same_zone": "Zuhause und Büro müssen verschiedene Zonen sein."
+    },
+    "abort": {
+      "already_configured": "Dieses Pendel-Konto ist bereits eingerichtet.",
+      "reauth_successful": "Erfolgreich neu angemeldet.",
+      "wrong_account": "Das ist ein anderes Pendel-Konto."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Automatische Erfassung",
+        "data": {
+          "track_location": "Ortswechsel an Pendel melden",
+          "person": "Person",
+          "home_zone": "Zone für Zuhause",
+          "office_zone": "Zone für das Büro"
+        },
+        "data_description": {
+          "track_location": "Pendel erfasst damit Arbeitsweg, Bürozeit und Pausen automatisch.",
+          "office_zone": "Die Zone deines Arbeitsplatzes. Fehlt sie, lege sie unter Einstellungen → Bereiche & Zonen an."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Pendel ist nicht erreichbar.",
+      "required_for_tracking": "Für die automatische Erfassung erforderlich.",
+      "same_zone": "Zuhause und Büro müssen verschiedene Zonen sein."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "idle": "Nicht eingestempelt",
+          "working_home": "Homeoffice",
+          "working_office": "Im Büro",
+          "working_other": "Bei der Arbeit",
+          "break": "Pause",
+          "commute_to_work": "Auf dem Weg zur Arbeit",
+          "commute_from_work": "Auf dem Heimweg"
+        },
+        "state_attributes": {
+          "since": {
+            "name": "Seit"
+          }
+        }
+      },
+      "status_since": {
+        "name": "Status seit"
+      },
+      "worked_today": {
+        "name": "Heute gearbeitet"
+      },
+      "target_today": {
+        "name": "Soll heute"
+      },
+      "remaining_today": {
+        "name": "Noch bis zum Soll"
+      },
+      "balance": {
+        "name": "Gleitzeitkonto"
+      },
+      "worked_week": {
+        "name": "Diese Woche gearbeitet"
+      },
+      "target_week": {
+        "name": "Soll diese Woche"
+      },
+      "breaks_today": {
+        "name": "Pausen heute"
+      },
+      "commute_today": {
+        "name": "Arbeitsweg heute"
+      },
+      "vacation_remaining": {
+        "name": "Resturlaub"
+      },
+      "next_absence": {
+        "name": "Nächste Abwesenheit"
+      }
+    },
+    "button": {
+      "start_home": {
+        "name": "Homeoffice starten"
+      },
+      "start_office": {
+        "name": "Büro starten"
+      },
+      "start_break": {
+        "name": "Pause starten"
+      },
+      "end_break": {
+        "name": "Pause beenden"
+      },
+      "stop_work": {
+        "name": "Feierabend"
+      }
+    }
+  },
+  "exceptions": {
+    "action_rejected": {
+      "message": "Pendel hat die Aktion abgelehnt: {detail}"
+    },
+    "cannot_connect": {
+      "message": "Pendel ist nicht erreichbar."
+    }
+  }
+}
