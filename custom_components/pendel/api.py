@@ -21,6 +21,14 @@ class PendelAuthError(PendelError):
     """Token or credentials were rejected."""
 
 
+class PendelTotpRequired(PendelAuthError):
+    """The account uses two-factor authentication: a code is needed (or the given one was wrong)."""
+
+    def __init__(self, invalid: bool = False) -> None:
+        super().__init__("invalid_totp" if invalid else "totp_required")
+        self.invalid = invalid
+
+
 class PendelConflictError(PendelError):
     """The action does not fit the current state (e.g. no session running)."""
 
@@ -65,15 +73,23 @@ class PendelClient:
             raise PendelConnectionError(str(err)) from err
 
     @staticmethod
-    async def create_token(session: aiohttp.ClientSession, url: str, email: str, password: str) -> str:
-        """Exchange e-mail + password for an API token."""
+    async def create_token(
+        session: aiohttp.ClientSession, url: str, email: str, password: str, totp: str | None = None
+    ) -> str:
+        """Exchange e-mail + password (+ 2FA code) for an API token."""
+        body = {"email": email, "password": password, "name": TOKEN_NAME}
+        if totp:
+            body["totp"] = totp
         try:
             async with session.post(
-                f"{normalize_url(url)}/api/auth/token",
-                json={"email": email, "password": password, "name": TOKEN_NAME},
-                timeout=aiohttp.ClientTimeout(total=20),
+                f"{normalize_url(url)}/api/auth/token", json=body, timeout=aiohttp.ClientTimeout(total=20)
             ) as resp:
-                if resp.status in (401, 429):
+                if resp.status == 401:
+                    detail = (await resp.json(content_type=None)).get("detail")
+                    if detail in ("totp_required", "invalid_totp"):
+                        raise PendelTotpRequired(invalid=detail == "invalid_totp")
+                    raise PendelAuthError
+                if resp.status == 429:
                     raise PendelAuthError
                 if resp.status != 201:
                     raise PendelConnectionError(f"HTTP {resp.status}")

@@ -13,6 +13,13 @@
           "url": "e.g. https://pendel.example.com"
         }
       },
+      "totp": {
+        "title": "Two-factor authentication",
+        "description": "Your Pendel account uses two-factor authentication. Enter the current code from your authenticator app (or a recovery code).",
+        "data": {
+          "code": "Code"
+        }
+      },
       "tracking": {
         "title": "Automatic tracking",
         "description": "Choose the person whose location Pendel should use and the zones for home and office.",
@@ -40,7 +47,8 @@
       "cannot_connect": "Cannot reach Pendel at this address.",
       "invalid_auth": "Wrong email or password (or too many attempts).",
       "required_for_tracking": "Required for automatic tracking.",
-      "same_zone": "Home and office must be different zones."
+      "same_zone": "Home and office must be different zones.",
+      "invalid_totp": "The code is invalid or has already been used."
     },
     "abort": {
       "already_configured": "This Pendel account is already configured.",

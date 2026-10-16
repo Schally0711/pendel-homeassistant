@@ -1,5 +1,6 @@
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResultType
+from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMockResponse
 
 from custom_components.pendel.const import DOMAIN
 
@@ -74,3 +75,38 @@ async def test_already_configured(hass, aioclient_mock, config_entry):
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     result = await hass.config_entries.flow.async_configure(result["flow_id"], LOGIN)
     assert result["type"] is FlowResultType.ABORT and result["reason"] == "already_configured"
+
+
+async def test_two_factor_flow(hass, aioclient_mock, zones):
+    calls = []
+
+    async def token(method, url, data):
+        calls.append(data)
+        if "totp" not in data:
+            return AiohttpClientMockResponse(method, url, status=401, json={"detail": "totp_required"})
+        if data["totp"] != "123456":
+            return AiohttpClientMockResponse(method, url, status=401, json={"detail": "invalid_totp"})
+        return AiohttpClientMockResponse(method, url, status=201, json={"token": "new-token"})
+
+    aioclient_mock.post(f"{URL}/api/auth/token", side_effect=token)
+    aioclient_mock.get(f"{URL}/api/me", json={"id": 1, "display_name": "Yannick"})
+    aioclient_mock.get(f"{URL}/api/places", json=PLACES)
+    aioclient_mock.put(f"{URL}/api/places/1", json=PLACES[0])
+    aioclient_mock.put(f"{URL}/api/places/2", json=PLACES[1])
+
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], LOGIN)
+    assert result["step_id"] == "totp"
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"code": "000000"})
+    assert result["errors"] == {"base": "invalid_totp"}
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"code": " 123456 "})
+    assert result["step_id"] == "tracking"
+    assert calls[-1] == {
+        "email": LOGIN["email"],
+        "password": "pw",
+        "name": "Home Assistant",
+        "totp": "123456",
+    }
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], TRACKING)
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert "password" not in result["data"] and "code" not in result["data"]

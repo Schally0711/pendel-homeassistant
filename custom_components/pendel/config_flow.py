@@ -6,14 +6,29 @@ from collections.abc import Mapping
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import (
+    SOURCE_REAUTH,
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD, CONF_TOKEN, CONF_URL
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .api import PendelAuthError, PendelClient, PendelError, normalize_url
+from .api import PendelAuthError, PendelClient, PendelError, PendelTotpRequired, normalize_url
 from .const import CONF_HOME_ZONE, CONF_OFFICE_ZONE, CONF_PERSON, CONF_TRACK_LOCATION, DOMAIN
+
+CONF_CODE = "code"
+TOTP_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_CODE): selector.TextSelector(
+            selector.TextSelectorConfig(autocomplete="one-time-code")
+        )
+    }
+)
 
 USER_SCHEMA = vol.Schema(
     {
@@ -75,16 +90,20 @@ class PendelConfigFlow(ConfigFlow, domain=DOMAIN):
         self._url = ""
         self._token = ""
         self._name = ""
+        self._credentials: dict[str, Any] = {}  # kept in memory only while a 2FA code is asked for
 
-    async def _login(self, user_input: dict[str, Any]) -> dict[str, str]:
-        """Create a token; returns form errors."""
+    async def _login(self, user_input: dict[str, Any], code: str | None = None) -> dict[str, str]:
+        """Create a token; returns form errors (`totp` = a 2FA code is needed)."""
         session = async_get_clientsession(self.hass)
         url = normalize_url(user_input[CONF_URL])
         try:
             token = await PendelClient.create_token(
-                session, url, user_input[CONF_EMAIL], user_input[CONF_PASSWORD]
+                session, url, user_input[CONF_EMAIL], user_input[CONF_PASSWORD], code
             )
             me = await PendelClient(session, url, token).me()
+        except PendelTotpRequired as err:
+            self._credentials = user_input
+            return {"base": "invalid_totp"} if err.invalid else {"totp": "required"}
         except PendelAuthError:
             return {"base": "invalid_auth"}
         except PendelError:
@@ -97,6 +116,8 @@ class PendelConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         if user_input is not None:
             errors = await self._login(user_input)
+            if "totp" in errors:
+                return await self.async_step_totp()
             if not errors:
                 self._abort_if_unique_id_configured()
                 return await self.async_step_tracking()
@@ -105,6 +126,19 @@ class PendelConfigFlow(ConfigFlow, domain=DOMAIN):
             data_schema=self.add_suggested_values_to_schema(USER_SCHEMA, user_input),
             errors=errors,
         )
+
+    async def async_step_totp(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Second factor for accounts with two-factor authentication."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = await self._login(self._credentials, user_input[CONF_CODE].strip())
+            if not errors:
+                self._credentials = {}
+                if self.source == SOURCE_REAUTH:
+                    return self._finish_reauth()
+                self._abort_if_unique_id_configured()
+                return await self.async_step_tracking()
+        return self.async_show_form(step_id="totp", data_schema=TOTP_SCHEMA, errors=errors)
 
     async def async_step_tracking(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         errors: dict[str, str] = {}
@@ -136,15 +170,22 @@ class PendelConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         if user_input is not None:
             errors = await self._login({CONF_URL: entry.data[CONF_URL], **user_input})
+            if "totp" in errors:
+                return await self.async_step_totp()
             if not errors:
-                self._abort_if_unique_id_mismatch(reason="wrong_account")
-                return self.async_update_reload_and_abort(entry, data_updates={CONF_TOKEN: self._token})
+                return self._finish_reauth()
         schema = vol.Schema({vol.Required(CONF_EMAIL): str, vol.Required(CONF_PASSWORD): str})
         return self.async_show_form(
             step_id="reauth_confirm",
             data_schema=schema,
             errors=errors,
             description_placeholders={"url": entry.data[CONF_URL]},
+        )
+
+    def _finish_reauth(self) -> ConfigFlowResult:
+        self._abort_if_unique_id_mismatch(reason="wrong_account")
+        return self.async_update_reload_and_abort(
+            self._get_reauth_entry(), data_updates={CONF_TOKEN: self._token}
         )
 
     @staticmethod

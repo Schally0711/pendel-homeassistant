@@ -13,6 +13,13 @@
           "url": "z. B. https://pendel.example.com"
         }
       },
+      "totp": {
+        "title": "Zwei-Faktor-Anmeldung",
+        "description": "Dein Pendel-Konto nutzt die Zwei-Faktor-Anmeldung. Gib den aktuellen Code aus deiner Authenticator-App (oder einen Wiederherstellungscode) ein.",
+        "data": {
+          "code": "Code"
+        }
+      },
       "tracking": {
         "title": "Automatische Erfassung",
         "description": "Wähle die Person, deren Standort Pendel nutzen soll, und die Zonen für Zuhause und Büro.",
@@ -40,7 +47,8 @@
       "cannot_connect": "Pendel ist unter dieser Adresse nicht erreichbar.",
       "invalid_auth": "E-Mail oder Passwort falsch (oder zu viele Versuche).",
       "required_for_tracking": "Für die automatische Erfassung erforderlich.",
-      "same_zone": "Zuhause und Büro müssen verschiedene Zonen sein."
+      "same_zone": "Zuhause und Büro müssen verschiedene Zonen sein.",
+      "invalid_totp": "Der Code ist ungültig oder wurde schon verwendet."
     },
     "abort": {
       "already_configured": "Dieses Pendel-Konto ist bereits eingerichtet.",
