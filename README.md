@@ -76,7 +76,28 @@ Alle Entitäten hängen an einem Gerät „Pendel (&lt;Name&gt;)“; die Werte w
 | Nächste Abwesenheit | Datum; Attribute `end`, `kind`, `note`, `workdays` |
 | Knöpfe | Homeoffice starten, Im Büro starten, Pause starten, Pause beenden, Feierabend |
 
-Beispiel: Hinweis, wenn um 20 Uhr noch eingestempelt ist (Entitäts-ID an deinen Namen anpassen).
+## Aktion: Arbeitsgerät aktiv (intelligenter Start)
+
+`pendel.device_active` meldet, dass dein Arbeitsgerät benutzt wird. Pendel startet dann die Arbeitszeit (Standard:
+Zuhause, optional `place: Büro`) – aber nur an einem Arbeitstag ohne Abwesenheit, wenn nichts läuft und heute noch
+nicht gearbeitet wurde. Die Aktion darf also oft ausgelöst werden. Beispiel: Arbeitsnotebook kommt ins Heimnetz.
+
+```yaml
+automation:
+  - alias: Arbeitsnotebook im Heimnetz → Homeoffice
+    triggers:
+      - trigger: state
+        entity_id: device_tracker.arbeitsnotebook
+        to: home
+    actions:
+      - action: pendel.device_active
+```
+
+Die Antwort (`response_variable`) enthält `started` (true/false) und die Aktionen von Pendel. Erfordert Pendel ≥ 0.9.2.
+
+## Beispiel-Automation
+
+Hinweis, wenn um 20 Uhr noch eingestempelt ist (Entitäts-ID an deinen Namen anpassen).
 
 ```yaml
 automation:

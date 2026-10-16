@@ -155,3 +155,19 @@ async def test_diagnostics_redact_secrets(hass, aioclient_mock, config_entry, zo
     assert "secret-token" not in str(diag) and URL not in str(diag)
     assert diag["status"] == "working_office"
     assert diag["tracker"] == {"person": "person.ich", "queued_events": 0}
+
+
+async def test_device_active_action(hass, aioclient_mock, config_entry, zones):
+    mock_pendel(aioclient_mock)
+    await setup(hass, config_entry)
+    aioclient_mock.clear_requests()  # first matching mock wins: register the events answer first
+    aioclient_mock.post(
+        f"{URL}/api/events", json={"events": [{"payload": {"actions": ["device_session_started"]}}]}
+    )
+    mock_pendel(aioclient_mock)
+    result = await hass.services.async_call(
+        "pendel", "device_active", {"place": "Zuhause"}, blocking=True, return_response=True
+    )
+    assert result == {"actions": ["device_session_started"], "started": True}
+    body = event_calls(aioclient_mock)[-1]
+    assert body == {"type": "device_active", "source": "home_assistant", "zone": "Zuhause"}

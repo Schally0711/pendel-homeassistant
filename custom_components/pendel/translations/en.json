@@ -155,6 +155,25 @@
     },
     "cannot_connect": {
       "message": "Cannot reach Pendel."
+    },
+    "choose_account": {
+      "message": "Several Pendel accounts are set up: choose one."
+    }
+  },
+  "services": {
+    "device_active": {
+      "name": "Work device active (smart start)",
+      "description": "Report that your work device is in use (e.g. laptop opened or connected to the home network). Pendel starts working time at the place only on a workday without absence, when nothing is running and nothing was worked today yet; otherwise nothing happens.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Pendel account",
+          "description": "Needed only if several Pendel accounts are set up."
+        },
+        "place": {
+          "name": "Place",
+          "description": "Name or zone of the place in Pendel (default: home)."
+        }
+      }
     }
   }
 }

@@ -155,6 +155,25 @@
     },
     "cannot_connect": {
       "message": "Pendel ist nicht erreichbar."
+    },
+    "choose_account": {
+      "message": "Es sind mehrere Pendel-Konten eingerichtet: bitte eines auswählen."
+    }
+  },
+  "services": {
+    "device_active": {
+      "name": "Arbeitsgerät aktiv (intelligenter Start)",
+      "description": "Meldet, dass dein Arbeitsgerät benutzt wird (z. B. Notebook aufgeklappt oder im Heimnetz). Pendel startet die Arbeitszeit am Ort nur an einem Arbeitstag ohne Abwesenheit, wenn nichts läuft und heute noch nicht gearbeitet wurde – sonst passiert nichts.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Pendel-Konto",
+          "description": "Nur nötig, wenn mehrere Pendel-Konten eingerichtet sind."
+        },
+        "place": {
+          "name": "Ort",
+          "description": "Name oder Zone des Ortes in Pendel (Standard: Zuhause)."
+        }
+      }
     }
   }
 }

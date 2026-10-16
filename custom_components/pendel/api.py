@@ -131,5 +131,13 @@ class PendelClient:
         )
         return result["events"]
 
+    async def device_active(self, place: str | None = None) -> list[str]:
+        """Smart start: Pendel starts work only on a workday when nothing ran today yet."""
+        body: dict[str, Any] = {"type": "device_active", "source": "home_assistant"}
+        if place:
+            body["zone"] = place
+        result = await self._request("POST", "/events", body)
+        return [a for e in result["events"] for a in e.get("payload", {}).get("actions", [])]
+
     async def clock(self, action: str, body: dict[str, Any] | None = None) -> None:
         await self._request("POST", f"/clock/{action}", body or {})
