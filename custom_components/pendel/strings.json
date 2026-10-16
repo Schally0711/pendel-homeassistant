@@ -10,7 +10,7 @@
           "password": "Password"
         },
         "data_description": {
-          "url": "e.g. https://pendel.example.com"
+          "url": "e.g. {example_url}"
         }
       },
       "totp": {

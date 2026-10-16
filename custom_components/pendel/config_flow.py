@@ -125,6 +125,7 @@ class PendelConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=self.add_suggested_values_to_schema(USER_SCHEMA, user_input),
             errors=errors,
+            description_placeholders={"example_url": "https://pendel.example.com"},
         )
 
     async def async_step_totp(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
