@@ -1,0 +1,27 @@
+name: Release
+
+# Push a tag like v0.2.0 (matching "version" in manifest.json) to publish a GitHub release with a zip of the
+# integration; HACS installs from these releases.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check version
+        run: |
+          manifest="$(python3 -c 'import json; print(json.load(open("custom_components/pendel/manifest.json"))["version"])')"
+          [ "v$manifest" = "${GITHUB_REF_NAME}" ] || { echo "manifest.json has $manifest, tag is ${GITHUB_REF_NAME}"; exit 1; }
+      - name: Zip
+        run: cd custom_components/pendel && zip -r ../../pendel.zip . -x '__pycache__/*'
+      - uses: softprops/action-gh-release@v3
+        with:
+          files: pendel.zip
+          prerelease: ${{ startsWith(github.ref_name, 'v0.') }}
+          generate_release_notes: true
