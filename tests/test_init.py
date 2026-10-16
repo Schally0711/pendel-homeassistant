@@ -142,3 +142,16 @@ async def test_options_flow(hass, aioclient_mock, config_entry, zones):
     assert result["type"] == "create_entry"
     await hass.async_block_till_done()
     assert config_entry.runtime_data.tracker.zones == {"zone.home", "zone.supermarkt"}
+
+
+async def test_diagnostics_redact_secrets(hass, aioclient_mock, config_entry, zones):
+    from custom_components.pendel.diagnostics import async_get_config_entry_diagnostics
+
+    mock_pendel(aioclient_mock)
+    await setup(hass, config_entry)
+    diag = await async_get_config_entry_diagnostics(hass, config_entry)
+    assert diag["entry"]["data"]["token"] == "**REDACTED**"
+    assert diag["entry"]["data"]["url"] == "**REDACTED**"
+    assert "secret-token" not in str(diag) and URL not in str(diag)
+    assert diag["status"] == "working_office"
+    assert diag["tracker"] == {"person": "person.ich", "queued_events": 0}

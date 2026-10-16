@@ -102,6 +102,8 @@ automation:
   Cloudflare Access vor Pendel, braucht es eine Bypass-Regel für `/api/*`.
 - **Es wird nichts automatisch erfasst:** Stimmen Person und Zonen (*Konfigurieren*)? In Pendel zeigt der
   Tageseditor unter *Automatik-Protokoll*, welche Meldungen angekommen sind und was daraus wurde.
+- **Diagnose:** *Einstellungen → Geräte & Dienste → Pendel → ⋮ → Diagnose herunterladen* – Token und Adresse sind darin
+  unkenntlich gemacht; die Datei gerne an Fehlerberichte anhängen.
 - Logs: *Einstellungen → System → Protokolle*, Filter „pendel“.
 
 Fehler und Ideen bitte als [Issue](https://github.com/Schally0711/pendel-homeassistant/issues) melden.
